@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "inferno.fullname" . }}
+  namespace: {{ .Values.namespace | default "inferno" }}
+  labels:
+    {{- include "inferno.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "inferno.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "inferno.selectorLabels" . | nindent 8 }}
+    spec:
+      imagePullSecrets:
+        - name: docker-pull-secret
+      containers:
+        - name: inferno
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}
+          livenessProbe:
+            httpGet:
+              path: /workers
+              port: 8000
+          readinessProbe:
+            httpGet:
+              path: /workers
+              port: 8000
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
