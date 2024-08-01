@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: kolockuloc/inferno
-  tag: 0.7.2
+  tag: latest
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
