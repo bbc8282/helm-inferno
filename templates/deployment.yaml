@@ -33,3 +33,14 @@ spec:
               port: 8000
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: inferno-storage
+              mountPath: {{ .Values.persistence.mountPath }}
+            {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: inferno-storage
+          persistentVolumeClaim:
+            claimName: {{ include "inferno.fullname" . }}-pvc
+        {{- end }}
